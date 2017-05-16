@@ -1,0 +1,17 @@
+{
+    "title": "Dave Winer",
+    "link": "http://scripting.com/",
+    "description": "I started up blogging, podcasting, RSS 2.0, and software for all of that. I love outliners, JavaScript. I love to make new media. Read my blog! :-)",
+    "language": "en-us",
+    "generator": "Radio3 v0.76d",
+    "docs": "http://cyber.law.harvard.edu/rss/rss.html",
+    "twitterScreenName": "davewiner",
+    "maxFeedItems": 25,
+    "appDomain": "radio3.io",
+    "flRssCloudEnabled": true,
+    "rssCloudDomain": "rpc.rsscloud.io",
+    "rssCloudPort": 5337,
+    "rssCloudPath": "/pleaseNotify",
+    "rssCloudRegisterProcedure": "",
+    "rssCloudProtocol": "http-post"
+}
