@@ -41,6 +41,9 @@ var rssCloudDefaults = {
 var localTimeFormat = "ddd, mmmm d, yyyy h:MM TT Z";
 
 function cloudPing (urlServer, urlFeed) {
+	if (urlServer === undefined) {
+		urlServer = "http://" + rssCloudDefaults.domain + ":" + rssCloudDefaults.port + rssCloudDefaults.path;
+		}
 	var outgoingData = {
 		url: urlFeed
 		};
