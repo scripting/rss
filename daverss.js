@@ -21,97 +21,32 @@
 	*/
 
 exports.buildRssFeed = buildRssFeed;
+exports.buildJsonFeed = buildJsonFeed;
+exports.getRssEnclosureInfo = getRssEnclosureInfo;
 exports.cloudPing = cloudPing;
 
-function filledString (ch, ct) {
-	var s = "";
-	for (var i = 0; i < ct; i++) {
-		s += ch;
-		}
-	return (s);
-	}
-function encodeXml (s) { 
-	if (s === undefined) { //1/9/16 by DW
-		return ("");
-		}
-	else {
-		var charMap = {
-			'<': '&lt;',
-			'>': '&gt;',
-			'&': '&amp;',
-			'"': '&'+'quot;'
-			};
-		s = s.toString();
-		s = s.replace(/\u00A0/g, " ");
-		var escaped = s.replace(/[<>&"]/g, function(ch) {
-			return charMap [ch];
-			});
-		return escaped;
-		}
-	}
-function trimWhitespace (s) { 
-	function isWhite (ch) {
-		switch (ch) {
-			case " ": case "\r": case "\n": case "\t":
-				return (true);
-			}
-		return (false);
-		}
-	if (s === undefined) { //9/10/14 by DW
-		return ("");
-		}
-	while (isWhite (s.charAt (0))) {
-		s = s.substr (1);
-		}
-	while (s.length > 0) {
-		if (!isWhite (s.charAt (0))) {
-			break;
-			}
-		s = s.substr (1);
-		}
-	while (s.length > 0) {
-		if (!isWhite (s.charAt (s.length - 1))) {
-			break;
-			}
-		s = s.substr (0, s.length - 1);
-		}
-	return (s);
-	}
-function twTwitterDateToGMT (twitterDate) { 
-	return (new Date (twitterDate).toGMTString ());
-	}
-function getBoolean (val) { 
-	switch (typeof (val)) {
-		case "string":
-			if (val.toLowerCase () == "true") {
-				return (true);
-				}
-			break;
-		case "boolean":
-			return (val);
-		case "number":
-			if (val == 1) {
-				return (true);
-				}
-			break;
-		}
-	return (false);
-	}
+const utils = require ("daveutils");
+const dateFormat = require ("dateformat");
+var marked = require ("marked"); 
 
+var urlSourceNamespace = "http://source.scripting.com/";
 var urlGetRssEnclosureInfo = "http://pub2.fargo.io:5347/getEnclosureInfo?url=";
-
-
-var rssCloudDefaults = { //6/5/15 by DW
+var rssCloudDefaults = { 
 	domain: "rpc.rsscloud.io",
 	port: 5337,
 	path: "/pleaseNotify"
 	}
-function rssCloudPing (urlServer, urlFeed) { //6/5/15 by DW
-	if (urlServer === undefined) {
-		urlServer = "http://" + rssCloudDefaults.domain + ":" + rssCloudDefaults.port + rssCloudDefaults.path;
-		}
-	$.post (urlServer, {url: urlFeed}, function (data, status) {
-		console.log ("rssCloudPing: urlServer == " + urlServer + ", urlFeed == " + urlFeed + ", status == " + status);
+var localTimeFormat = "ddd, mmmm d, yyyy h:MM TT Z";
+
+function cloudPing (urlServer, urlFeed) {
+	var outgoingData = {
+		url: urlFeed
+		};
+	var rq = {
+		uri: urlServer,
+		body: querystring.stringify (outgoingData)
+		};
+	request.post (rq, function (err, res, body) {
 		});
 	}
 function getRssEnclosureInfo (obj, callback) {
@@ -138,17 +73,38 @@ function getRssEnclosureInfo (obj, callback) {
 		obj.enclosure.flError = true;
 		});
 	}
+function markdownProcess (s) {
+	var renderer = new marked.Renderer ();
+	renderer.paragraph = function (s) {
+		return (s);
+		};
+	var options = {
+		renderer: renderer
+		};
+	return (marked (s, options));
+	}
 function buildRssFeed (headElements, historyArray) {
 	function encode (s) {
-		var lines = encodeXml (s).split (String.fromCharCode (10));
+		var lines = utils.encodeXml (s).split (String.fromCharCode (10));
 		var returnedstring = "";
 		for (var i = 0; i < lines.length; i++) {
-			returnedstring += trimWhitespace (lines [i]);
+			returnedstring += utils.trimWhitespace (lines [i]);
 			if (i < (lines.length - 1)) {
 				returnedstring += "&#10;";
 				}
 			}
 		return (returnedstring);
+		}
+	function timeToString (when) {
+		return (new Date (when).toGMTString ());
+		}
+	function whenMostRecentItem () {
+		if (historyArray.length > 0) {
+			return (new Date (historyArray [0].when));
+			}
+		else {
+			return (new Date (0));
+			}
 		}
 	function facebookEncodeContent (item, bodystring) {
 		
@@ -184,7 +140,7 @@ function buildRssFeed (headElements, historyArray) {
 			return (multipleReplaceAll (s, replaceTable, false)); 
 			}
 		function add (s) {
-			htmltext += filledString ("\t", indentlevel) + s + "\n";
+			htmltext += utils.filledString ("\t", indentlevel) + s + "\n";
 			}
 		function formatDate (d) {
 			
@@ -220,14 +176,6 @@ function buildRssFeed (headElements, historyArray) {
 		add ("</html>"); indentlevel--;
 		return (htmltext);
 		}
-	function whenMostRecentTweet () {
-		if (historyArray.length > 0) {
-			return (new Date (historyArray [0].when));
-			}
-		else {
-			return (new Date (0));
-			}
-		}
 	function buildOutlineXml (theOutline) {
 		function addOutline (outline) {
 			var s = "<source:outline";
@@ -236,7 +184,7 @@ function buildRssFeed (headElements, historyArray) {
 				}
 			function addAtt (name) {
 				if (outline [name] != undefined) {
-					s += " " + name + "=\"" + encode (outline [name]) + "\" ";
+					s += " " + name + "=\"" + encode (outline [name]) + "\"";
 					}
 				}
 			addAtt ("text");
@@ -261,20 +209,10 @@ function buildRssFeed (headElements, historyArray) {
 		addOutline (theOutline);
 		return (xmltext);
 		}
-	function markdownProcess (s) { //7/24/15 by DW
-		var md = new Markdown.Converter (), theList = s.split ("</p><p>"), markdowntext = "";
-		for (var i = 0; i < theList.length; i++) {
-			var lt = theList [i];
-			if ((lt.length > 0) && (lt != "<p>") && (lt != "</p>")) {
-				markdowntext += "<p>" + md.makeHtml (lt) + "</p>";
-				}
-			}
-		return (markdowntext);
-		}
-	var xmltext = "", indentlevel = 0, starttime = new Date (); nowstring = starttime.toGMTString ();
+	var xmltext = "", indentlevel = 0, now = new Date (); nowstring = now.toGMTString ();
 	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems, contentNamespaceDecl = "", facebookNamespaceDecl = "";
 	function add (s) {
-		xmltext += filledString ("\t", indentlevel) + s + "\n";
+		xmltext += utils.filledString ("\t", indentlevel) + s + "\n";
 		}
 	function addAccount (servicename, username) {
 		if ((username != undefined) && (username.length > 0)) { 
@@ -284,88 +222,78 @@ function buildRssFeed (headElements, historyArray) {
 	add ("<?xml version=\"1.0\"?>")
 	add ("<!-- RSS generated by " + headElements.generator + " on " + nowstring + " -->")
 	
-	if (getBoolean (headElements.flUseContentEncoded)) { //2/22/16 by DW
+	if (utils.getBoolean (headElements.flUseContentEncoded)) { //2/22/16 by DW
 		contentNamespaceDecl = " xmlns:content=\"http://purl.org/rss/1.0/modules/content/\"";
 		}
-	if (getBoolean (headElements.flFacebookEncodeContent)) { //3/7/16 by DW
+	if (utils.getBoolean (headElements.flFacebookEncodeContent)) { //3/7/16 by DW
 		facebookNamespaceDecl = " xmlns:IA=\"http://rss2.io/ia/\"";
 		}
 	
-	add ("<rss version=\"2.0\" xmlns:source=\"http://source.smallpict.com/2014/07/12/theSourceNamespace.html\"" + contentNamespaceDecl + facebookNamespaceDecl + ">"); indentlevel++
+	add ("<rss version=\"2.0\" xmlns:source=\"" + urlSourceNamespace + "\"" + contentNamespaceDecl + facebookNamespaceDecl + ">"); indentlevel++
 	add ("<channel>"); indentlevel++;
 	//add header elements
-		add ("<title>" + encode (headElements.title) + "</title>");
-		add ("<link>" + encode (headElements.link) + "</link>");
-		add ("<description>" + encode (headElements.description) + "</description>");
-		add ("<pubDate>" + whenMostRecentTweet ().toUTCString () + "</pubDate>"); 
-		add ("<lastBuildDate>" + nowstring + "</lastBuildDate>");
-		add ("<language>" + encode (headElements.language) + "</language>");
-		add ("<generator>" + headElements.generator + "</generator>");
-		add ("<docs>" + headElements.docs + "</docs>");
 		
+		function addIfDefined (name, value) {
+			if (value !== undefined) {
+				add ("<" + name + ">" + encode (value) + "</" + name + ">");
+				}
+			}
+		addIfDefined ("title", headElements.title);
+		addIfDefined ("link", headElements.link);
+		addIfDefined ("description", headElements.description);
+		add ("<pubDate>" + whenMostRecentItem ().toUTCString () + "</pubDate>"); 
+		addIfDefined ("language", headElements.language);
+		addIfDefined ("generator", headElements.generator);
+		addIfDefined ("copyright", headElements.copyright);
+		addIfDefined ("docs", headElements.docs);
+		add ("<lastBuildDate>" + nowstring + "</lastBuildDate>");
 		//<cloud> element -- 6/5/15 by DW
 			if (headElements.flRssCloudEnabled) {
 				add ("<cloud domain=\"" + headElements.rssCloudDomain + "\" port=\"" + headElements.rssCloudPort + "\" path=\"" + headElements.rssCloudPath + "\" registerProcedure=\"" + headElements.rssCloudRegisterProcedure + "\" protocol=\"" + headElements.rssCloudProtocol + "\" />")
 				}
-		
 		addAccount ("twitter", username); 
+		addAccount ("facebook", headElements.ownerFacebookAccount); 
+		addAccount ("github", headElements.ownerGithubAccount); 
+		addAccount ("linkedin", headElements.ownerLinkedinAccount); 
+		add ("<source:localTime>" + dateFormat (now, localTimeFormat) + "</source:localTime>");
 	//add items
 		var ctitems = 0;
 		for (var i = 0; (i < historyArray.length) && (ctitems < maxitems); i++) {
 			var item = historyArray [i];
-			if ((!getBoolean (headElements.flTitledItemsOnly)) || (item.title !== undefined)) { //2/22/16 by DW
-				var itemcreated = twTwitterDateToGMT (item.when), itemtext = encode (item.text);
+			if ((!utils.getBoolean (headElements.flTitledItemsOnly)) || (item.title !== undefined)) { //2/22/16 by DW
+				var itemcreated = timeToString (item.when), itemtext = encode (item.text);
 				var linktotweet = encode ("https://twitter.com/" + username + "/status/" + item.idTweet);
 				add ("<item>"); indentlevel++;
-				if (item.title !== undefined) { //3/4/15 by DW
+				if (item.title !== undefined) {
 					add ("<title>" + encode (item.title) + "</title>"); 
 					}
-				//description -- 3/26/15 by DW
-					function addDescriptionElement (s) {
-						add ("<description>" + encode (s) + "</description>");
-						if (getBoolean (headElements.flUseContentEncoded)) {
-							add ("<content:encoded><![CDATA["); indentlevel++;
-							if (getBoolean (headElements.flFacebookEncodeContent)) {
-								s = facebookEncodeContent (item, s);
-								}
-							add (s);
-							add ("]]></content:encoded>"); indentlevel--;
+				if (item.text !== undefined) {
+					var theDescription = item.text;
+					if (item.outline !== undefined) {
+						switch (item.outline.type) {
+							case "markdown":
+								theDescription = markdownProcess (theDescription);
+								break;
 							}
 						}
-					if (getBoolean (item.flMarkdown)) {
-						if (getBoolean (item.flPgfLevelMarkdown)) { //7/24/15 by DW
-							addDescriptionElement (markdownProcess (item.text));
-							}
-						else {
-							addDescriptionElement (new Markdown.Converter ().makeHtml (item.text));
-							}
-						}
-					else {
-						addDescriptionElement (item.text);
-						}
+					add ("<description>" + encode (theDescription) + "</description>"); 
+					}
 				add ("<pubDate>" + itemcreated + "</pubDate>"); 
-				//link -- 8/12/14 by DW
-					if (item.link != undefined) {
-						add ("<link>" + encode (item.link) + "</link>"); 
-						}
-					else {
-						add ("<link>" + linktotweet + "</link>"); 
-						}
+				if (item.link !== undefined) {
+					add ("<link>" + encode (item.link) + "</link>"); 
+					}
 				//source:linkShort -- 8/26/14 by DW
-					if (item.linkShort != undefined) {
+					if (item.linkShort !== undefined) {
 						add ("<source:linkShort>" + encode (item.linkShort) + "</source:linkShort>"); 
 						}
 				//guid -- 8/12/14 by DW
 					if (item.guid != undefined) {
-						if (getBoolean (item.guid.flPermalink)) {
+						if (utils.getBoolean (item.guid.flPermalink)) {
 							add ("<guid>" + encode (item.guid.value) + "</guid>"); 
 							}
 						else {
 							add ("<guid isPermaLink=\"false\">" + encode (item.guid.value) + "</guid>"); 
 							}
-						}
-					else {
-						add ("<guid>" + linktotweet + "</guid>"); 
 						}
 				//enclosure -- 8/11/14 by DW
 					if (item.enclosure != undefined) {
@@ -373,10 +301,6 @@ function buildRssFeed (headElements, historyArray) {
 						if ((enc.url != undefined) && (enc.type != undefined) && (enc.length != undefined)) {
 							add ("<enclosure url=\"" + enc.url + "\" type=\"" + enc.type + "\" length=\"" + enc.length + "\"/>");
 							}
-						}
-				//source:markdown -- 3/26/15 by DW
-					if (getBoolean (item.flMarkdown)) {
-						add ("<source:markdown>" + itemtext + "</source:markdown>"); 
 						}
 				//source:jsonUrl -- 3/24/15 by DW
 					if (item.linkJson !== undefined) {
@@ -415,17 +339,120 @@ function buildRssFeed (headElements, historyArray) {
 	add ("</rss>"); indentlevel--;
 	return (xmltext);
 	}
-
-
-function cloudPing (urlServer, urlFeed) {
-	var outgoingData = {
-		url: urlFeed
+function buildJsonFeed (headElements, historyArray) {
+	var now = new Date (); nowstring = now.toGMTString ();
+	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems;
+	function addAccount (servicename, username) {
+		if ((username != undefined) && (username.length > 0)) { 
+			var accounts;
+			if (jstruct.rss.channel ["source:account"] === undefined) {
+				jstruct.rss.channel ["source:account"] = new Array ();
+				}
+			accounts = jstruct.rss.channel ["source:account"];
+			accounts [accounts.length] = {
+				service: servicename,
+				"#value": username
+				};
+			}
+		}
+	function whenMostRecentItem () {
+		if (historyArray.length > 0) {
+			return (new Date (historyArray [0].when));
+			}
+		else {
+			return (new Date (0));
+			}
+		}
+	function timeToString (when) {
+		return (new Date (when).toGMTString ());
+		}
+	var jstruct = {
+		rss: {
+			version: "2.0",
+			"xmlns:source": "http://source.scripting.com/",
+			channel: {
+				title: headElements.title,
+				link: headElements.link,
+				description: headElements.description,
+				pubDate: whenMostRecentItem ().toUTCString (),
+				lastBuildDate: nowstring,
+				language: headElements.language,
+				copyright: headElements.copyright,
+				docs: headElements.docs,
+				"source:localTime": dateFormat (now, localTimeFormat)
+				}
+			}
 		};
-	var rq = {
-		uri: urlServer,
-		body: querystring.stringify (outgoingData)
-		};
-	request.post (rq, function (err, res, body) {
-		});
-	pingCommunityServer (urlFeed); //4/3/16 by DW
+	if (headElements.flRssCloudEnabled) {
+		jstruct.rss.channel.cloud = {
+			domain: headElements.rssCloudDomain,
+			port: headElements.rssCloudPort,
+			path: headElements.rssCloudPath,
+			registerProcedure: headElements.rssCloudRegisterProcedure,
+			protocol: headElements.rssCloudProtocol
+			};
+		}
+	addAccount ("twitter", username); 
+	addAccount ("facebook", headElements.ownerFacebookAccount); 
+	addAccount ("github", headElements.ownerGithubAccount); 
+	addAccount ("linkedin", headElements.ownerLinkedinAccount); 
+	//add items
+		var ctitems = 0, items = jstruct.rss.channel.item = new Array ();
+		for (var i = 0; (i < historyArray.length) && (ctitems < maxitems); i++) {
+			var item = historyArray [i], feedItem = new Object ();
+			if ((!utils.getBoolean (headElements.flTitledItemsOnly)) || (item.title !== undefined)) { //2/22/16 by DW
+				var itemcreated = timeToString (item.when);
+				feedItem.title = item.title;
+				feedItem.link = item.link;
+				//description
+					feedItem.description  = item.text;
+					if (item.outline !== undefined) {
+						switch (item.outline.type) {
+							case "markdown":
+								feedItem.description = markdownProcess (feedItem.description);
+								break;
+							}
+						}
+				feedItem.pubDate = itemcreated;
+				
+				//guid
+					if (item.guid !== undefined) {
+						if (utils.getBoolean (item.guid.flPermalink)) {
+							feedItem.guid = item.guid.value;
+							}
+						else {
+							feedItem.guid = {
+								isPermaLink: false,
+								"#value": item.guid.value
+								};
+							}
+						}
+				//enclosure
+					if (item.enclosure !== undefined) {
+						var enc = item.enclosure;
+						if ((enc.url !== undefined) && (enc.type !== undefined) && (enc.length !== undefined)) {
+							feedItem.enclosure = {
+								url: enc.url,
+								type: enc.type,
+								length: enc.length
+								};
+							}
+						}
+				//source:markdown
+					if (utils.getBoolean (item.flMarkdown)) {
+						feedItem ["source:markdown"] = item.text;
+						}
+				//source:jsonUrl
+					if (item.linkJson !== undefined) {
+						feedItem ["source:linkJson"] = item.linkJson;
+						}
+				//source:outline
+				
+				feedItem ["source:linkShort"] = item.linkShort;
+				feedItem ["source:outline"] = item.outline;
+				jstruct.rss.channel.item.push (feedItem);
+				ctitems++;
+				}
+			}
+	return (utils.jsonStringify (jstruct));
 	}

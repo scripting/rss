@@ -16,3 +16,9 @@ I need to document the data structure, however in the meantime, here are example
 
 These examples are from a snapshot of the data for my Radio3 linkblog feed, which is built using this code.
 
+#### Updates
+
+##### v0.4.2 -- 5/29/17 by DW
+
+Major code review, bring it up to date with my latest software. Also includes buildJsonFeed which generates a 1-1 equivalent of the RSS feed, but using JSON instead of XML. I plan to support this format in <a href="http://scripting.com/">Scripting News</a>.
+
