@@ -22,7 +22,7 @@
 
 exports.buildRssFeed = buildRssFeed;
 exports.buildJsonFeed = buildJsonFeed;
-exports.getRssEnclosureInfo = getRssEnclosureInfo;
+exports.getEnclosureInfo = getRssEnclosureInfo;
 exports.cloudPing = cloudPing;
 
 const utils = require ("daveutils");
@@ -88,6 +88,20 @@ function markdownProcess (s) {
 		};
 	return (marked (s, options));
 	}
+function whenMostRecentItem (historyArray) {
+	var ixMostRecent, whenMostRecent = new Date (0);
+	for (var i = 0; i < historyArray.length; i++) {
+		var when = new Date (historyArray [i].when);
+		if (when > whenMostRecent) {
+			whenMostRecent = when;
+			ixMostRecent = i;
+			}
+		}
+	return (whenMostRecent);
+	}
+function timeToString (when) {
+	return (new Date (when).toGMTString ());
+	}
 function buildRssFeed (headElements, historyArray) {
 	function encode (s) {
 		var lines = utils.encodeXml (s).split (String.fromCharCode (10));
@@ -99,17 +113,6 @@ function buildRssFeed (headElements, historyArray) {
 				}
 			}
 		return (returnedstring);
-		}
-	function timeToString (when) {
-		return (new Date (when).toGMTString ());
-		}
-	function whenMostRecentItem () {
-		if (historyArray.length > 0) {
-			return (new Date (historyArray [0].when));
-			}
-		else {
-			return (new Date (0));
-			}
 		}
 	function facebookEncodeContent (item, bodystring) {
 		
@@ -246,7 +249,7 @@ function buildRssFeed (headElements, historyArray) {
 		addIfDefined ("title", headElements.title);
 		addIfDefined ("link", headElements.link);
 		addIfDefined ("description", headElements.description);
-		add ("<pubDate>" + whenMostRecentItem ().toUTCString () + "</pubDate>"); 
+		add ("<pubDate>" + whenMostRecentItem (historyArray).toUTCString () + "</pubDate>"); 
 		addIfDefined ("language", headElements.language);
 		addIfDefined ("generator", headElements.generator);
 		addIfDefined ("copyright", headElements.copyright);
@@ -360,26 +363,15 @@ function buildJsonFeed (headElements, historyArray) {
 				};
 			}
 		}
-	function whenMostRecentItem () {
-		if (historyArray.length > 0) {
-			return (new Date (historyArray [0].when));
-			}
-		else {
-			return (new Date (0));
-			}
-		}
-	function timeToString (when) {
-		return (new Date (when).toGMTString ());
-		}
 	var jstruct = {
 		rss: {
 			version: "2.0",
-			"xmlns:source": "http://source.scripting.com/",
+			"xmlns:source": urlSourceNamespace,
 			channel: {
 				title: headElements.title,
 				link: headElements.link,
 				description: headElements.description,
-				pubDate: whenMostRecentItem ().toUTCString (),
+				pubDate: whenMostRecentItem (historyArray).toUTCString (),
 				lastBuildDate: nowstring,
 				language: headElements.language,
 				copyright: headElements.copyright,
