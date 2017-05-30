@@ -27,7 +27,9 @@ exports.cloudPing = cloudPing;
 
 const utils = require ("daveutils");
 const dateFormat = require ("dateformat");
-var marked = require ("marked"); 
+const marked = require ("marked"); 
+const querystring = require ("querystring");
+const request = require ("request");
 
 var urlSourceNamespace = "http://source.scripting.com/";
 var urlGetRssEnclosureInfo = "http://pub2.fargo.io:5347/getEnclosureInfo?url=";
