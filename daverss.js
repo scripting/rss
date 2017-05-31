@@ -40,7 +40,7 @@ var rssCloudDefaults = {
 	}
 var localTimeFormat = "ddd, mmmm d, yyyy h:MM TT Z";
 
-function cloudPing (urlServer, urlFeed) {
+function cloudPing (urlServer, urlFeed, callback) {
 	if (urlServer === undefined) {
 		urlServer = "http://" + rssCloudDefaults.domain + ":" + rssCloudDefaults.port + rssCloudDefaults.path;
 		}
@@ -49,9 +49,13 @@ function cloudPing (urlServer, urlFeed) {
 		};
 	var rq = {
 		uri: urlServer,
-		body: querystring.stringify (outgoingData)
+		form: outgoingData
 		};
+	console.log ("rss.cloudPing: rq == " + utils.jsonStringify (rq));
 	request.post (rq, function (err, res, body) {
+		if (callback !== undefined) {
+			callback (err, res, body);
+			}
 		});
 	}
 function getRssEnclosureInfo (obj, callback) {
