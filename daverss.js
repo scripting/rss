@@ -452,7 +452,6 @@ function buildJsonFeed (headElements, historyArray) {
 					if (item.linkJson !== undefined) {
 						feedItem ["source:linkJson"] = item.linkJson;
 						}
-				//source:outline
 				
 				feedItem ["source:linkShort"] = item.linkShort;
 				feedItem ["source:outline"] = item.outline;
