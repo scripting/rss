@@ -379,7 +379,8 @@ function buildJsonFeed (headElements, historyArray) {
 				lastBuildDate: nowstring,
 				language: headElements.language,
 				copyright: headElements.copyright,
-				docs: headElements.docs,
+				generator: headElements.generator,
+				docs: (headElements.docsForJsonFeed === undefined) ? headElements.docs : headElements.docsForJsonFeed, //6/4/17 by DW
 				"source:localTime": dateFormat (now, localTimeFormat)
 				}
 			}
@@ -432,10 +433,14 @@ function buildJsonFeed (headElements, historyArray) {
 					if (item.enclosure !== undefined) {
 						var enc = item.enclosure;
 						if ((enc.url !== undefined) && (enc.type !== undefined) && (enc.length !== undefined)) {
+							var lengthAsNumber = Number (enc.length); //6/9/17 by DW
+							if (isNaN (lengthAsNumber)) {
+								lengthAsNumber = undefined;
+								}
 							feedItem.enclosure = {
 								url: enc.url,
 								type: enc.type,
-								length: enc.length
+								length: lengthAsNumber
 								};
 							}
 						}
