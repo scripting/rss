@@ -1,3 +1,5 @@
+var myProductName = "daverss", myVersion = "0.5.4";  
+
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
 	
@@ -51,7 +53,6 @@ function cloudPing (urlServer, urlFeed, callback) {
 		uri: urlServer,
 		form: outgoingData
 		};
-	console.log ("rss.cloudPing: rq == " + utils.jsonStringify (rq));
 	request.post (rq, function (err, res, body) {
 		if (callback !== undefined) {
 			callback (err, res, body);
@@ -195,14 +196,13 @@ function buildRssFeed (headElements, historyArray) {
 				return (outline.subs != undefined) && (outline.subs.length > 0);
 				}
 			function addAtt (name) {
-				if (outline [name] != undefined) {
+				if (outline [name] !== undefined) {
 					s += " " + name + "=\"" + encode (outline [name]) + "\"";
 					}
 				}
-			addAtt ("text");
-			addAtt ("type");
-			addAtt ("created");
-			addAtt ("name");
+			for (x in outline) { //6/28/17 by DW
+				addAtt (x);
+				}
 			
 			if (hasSubs (outline)) {
 				add (s + ">");
@@ -289,6 +289,15 @@ function buildRssFeed (headElements, historyArray) {
 							}
 						}
 					add ("<description>" + encode (theDescription) + "</description>"); 
+					if (utils.getBoolean (headElements.flUseContentEncoded)) { //7/4/17 by DW
+						var encodedDescription = theDescription;
+						add ("<content:encoded><![CDATA["); indentlevel++;
+						if (utils.getBoolean (headElements.flFacebookEncodeContent)) {
+							encodedDescription = facebookEncodeContent (item, encodedDescription);
+							}
+						add (encodedDescription);
+						add ("]]></content:encoded>"); indentlevel--;
+						}
 					}
 				add ("<pubDate>" + itemcreated + "</pubDate>"); 
 				if (item.link !== undefined) {
