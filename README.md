@@ -18,6 +18,10 @@ These examples are from a snapshot of the data for my Radio3 linkblog feed, whic
 
 #### Updates
 
+##### v0.5.4 -- 7/4/17 by DW
+
+Bring in support for Facebook Instant Articles feeds. 
+
 ##### v0.4.14 -- 6/9/17 by DW
 
 Per Dan MacTough's suggestion, in the JSON version, the length attribute on enclosure should be a number. If it coerces to a number, great, if there's an error, leave out the length property. 
