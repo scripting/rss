@@ -6,6 +6,7 @@
     "generator": "Radio3 v0.76d",
     "docs": "http://cyber.law.harvard.edu/rss/rss.html",
     "twitterScreenName": "davewiner",
+    "facebookPageName": "Scripting News",
     "maxFeedItems": 25,
     "appDomain": "radio3.io",
     "flRssCloudEnabled": true,
