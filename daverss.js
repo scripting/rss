@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.5.4";  
+var myProductName = "daverss", myVersion = "0.5.5";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2017 Dave Winer
@@ -181,7 +181,7 @@ function buildRssFeed (headElements, historyArray) {
 			if (item.whenupdate !== undefined) {
 				add ("<time class=\"op-modified\" dateTime=\"" + new Date (item.whenupdate).toISOString () + "\">" + formatDate (item.whenupdate) + "</time>");
 				}
-			add ("<address><a>" + item.name + "</a></address>"); //2/24/16 by DW
+			add ("<address><a>" + headElements.facebookPageName + "</a></address>"); //2/24/16 by DW
 			add (massageHtml (bodystring));
 			add ("</header>"); indentlevel--;
 			add ("</article>"); indentlevel--;
