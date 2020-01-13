@@ -1,0 +1,11 @@
+{
+	"name": "example",
+	"description": "An example that creates an RSS feed from what's on Scripting News right now.",
+	"author": "Dave Winer <dave@smallpicture.com>",
+	"license": "MIT",
+	"version": "0.4.0",
+	"dependencies" : {
+		"daverss": "*",
+		"daveutils": "*"
+		} 
+	}
