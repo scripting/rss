@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.5.12";  
+var myProductName = "daverss", myVersion = "0.5.18";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2018 Dave Winer
@@ -201,9 +201,10 @@ function buildRssFeed (headElements, historyArray) {
 					}
 				}
 			for (x in outline) { //6/28/17 by DW
-				addAtt (x);
+				if (x != "subs") { //5/16/19 by DW
+					addAtt (x);
+					}
 				}
-			
 			if (hasSubs (outline)) {
 				add (s + ">");
 				indentlevel++;
@@ -216,7 +217,6 @@ function buildRssFeed (headElements, historyArray) {
 			else {
 				add (s + "/>");
 				}
-			
 			}
 		addOutline (theOutline);
 		return (xmltext);
@@ -319,6 +319,10 @@ function buildRssFeed (headElements, historyArray) {
 							add ("<guid isPermaLink=\"false\">" + encode (item.guid.value) + "</guid>"); 
 							}
 						}
+				//author -- 7/31/19 by DW
+					if (item.author !== undefined) { 
+						add ("<author>" + encode (item.author) + "</author>"); 
+						}
 				//enclosure -- 8/11/14 by DW
 					if (item.enclosure != undefined) {
 						var enc = item.enclosure;
@@ -354,6 +358,18 @@ function buildRssFeed (headElements, historyArray) {
 									}
 								}
 							}
+						}
+				//category -- 12/18/18 by DW
+					if (item.categories !== undefined) { //must be an array
+						if (Array.isArray (item.categories)) {
+							item.categories.forEach (function (item) {
+								add ("<category>" + item + "</category>"); 
+								});
+							}
+						}
+				//source:account for twitter only -- 12/18/18 by DW
+					if (item.twitterScreenName !== undefined) { 
+						addAccount ("twitter", item.twitterScreenName); 
 						}
 				add ("</item>"); indentlevel--;
 				ctitems++;
