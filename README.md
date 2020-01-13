@@ -4,7 +4,7 @@ This is where I put my JavaScript code to generate RSS feeds from my apps, runni
 
 ### Examples
 
-Here are examples of the two data structures you have to send to `buildRssFeed` to get it to build an RSS feed for you:
+Here are examples of the two data structures you have to send to `rss.buildRssFeed` to get it to build an RSS feed for you:
 
 1. <a href="https://github.com/scripting/rss/blob/master/examples/radio3/headElements.json">headElements</a>
 
@@ -12,7 +12,7 @@ Here are examples of the two data structures you have to send to `buildRssFeed` 
 
 These examples are from a snapshot of the data for my Radio3 linkblog feed, which is built using this code.
 
-And here's a Node test app that shows you how to call rss.buidRssFeed to create a feed locally.
+And here's a <a href="https://github.com/scripting/rss/tree/master/examples/app">test app</a> that shows you how to call rss.buidRssFeed to create a feed locally.
 
 ### Updates
 
