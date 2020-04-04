@@ -86,11 +86,13 @@ var historyArray = [
 		}
 	]
 
-var xmltext = rss.buildRssFeed (headElements, historyArray);
+var xmltext = rss.buildRssFeed (headElements, historyArray); //generate the RSS feed from the data
 fs.writeFile ("rss.xml", xmltext, function (err) {
 	if (err) {
 		console.log (err.message);
 		}
+	else {
+		console.log ("rss.xml successfully created.");
+		}
 	});
-
 

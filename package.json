@@ -1,9 +1,9 @@
 {
 	"name": "daverss",
 	"description": "This is where I put my code to generate RSS feeds from server apps.",
-	"author": "Dave Winer <dave@smallpicture.com>",
+	"author": "Dave Winer <dave.winer@gmaill.com>",
 	"license": "MIT",
-	"version": "0.5.20",
+	"version": "0.5.29",
 	"main": "daverss.js",
 	"repository": {
 		"type": "git",

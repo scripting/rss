@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.5.20";  
+var myProductName = "daverss", myVersion = "0.5.29";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2020 Dave Winer
@@ -222,7 +222,8 @@ function buildRssFeed (headElements, historyArray) {
 		return (xmltext);
 		}
 	var xmltext = "", indentlevel = 0, now = new Date (); nowstring = now.toGMTString ();
-	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems, contentNamespaceDecl = "", facebookNamespaceDecl = "";
+	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems;
+	var contentNamespaceDecl = "", facebookNamespaceDecl = "", itunesNamespaceDecl = "";
 	function add (s) {
 		xmltext += utils.filledString ("\t", indentlevel) + s + "\n";
 		}
@@ -241,8 +242,11 @@ function buildRssFeed (headElements, historyArray) {
 	if (utils.getBoolean (headElements.flFacebookEncodeContent)) { //3/7/16 by DW
 		facebookNamespaceDecl = " xmlns:IA=\"http://rss2.io/ia/\"";
 		}
+	if (headElements.itunes !== undefined) { //4/4/20 by DW
+		itunesNamespaceDecl = " xmlns:itunes=\"http://www.itunes.com/dtds/podcast-1.0.dtd\"";
+		}
 	
-	add ("<rss version=\"2.0\" xmlns:source=\"" + urlSourceNamespace + "\"" + contentNamespaceDecl + facebookNamespaceDecl + ">"); indentlevel++
+	add ("<rss version=\"2.0\" xmlns:source=\"" + urlSourceNamespace + "\"" + contentNamespaceDecl + facebookNamespaceDecl + itunesNamespaceDecl + ">"); indentlevel++
 	add ("<channel>"); indentlevel++;
 	//add header elements
 		function addIfDefined (name, value) {
@@ -262,6 +266,46 @@ function buildRssFeed (headElements, historyArray) {
 		//<cloud> element -- 6/5/15 by DW
 			if (headElements.flRssCloudEnabled) {
 				add ("<cloud domain=\"" + headElements.rssCloudDomain + "\" port=\"" + headElements.rssCloudPort + "\" path=\"" + headElements.rssCloudPath + "\" registerProcedure=\"" + headElements.rssCloudRegisterProcedure + "\" protocol=\"" + headElements.rssCloudProtocol + "\" />")
+				}
+		//<image> element -- 4/4/20 by DW
+			if (headElements.image !== undefined) {
+				add ("<image>"); indentlevel++;
+				add ("<url>" + encode (headElements.image.url) + "</url>");
+				add ("<title>" + encode (headElements.image.title) + "</title>");
+				add ("<link>" + encode (headElements.image.link) + "</link>");
+				if (headElements.image.description !== undefined) { //optional
+					add ("<description>" + encode (headElements.image.description) + "</description>");
+					}
+				if (headElements.image.width !== undefined) { //optional
+					add ("<width>" + encode (headElements.image.width) + "</width>");
+					}
+				if (headElements.image.height !== undefined) { //optional
+					add ("<height>" + encode (headElements.image.height) + "</height>");
+					}
+				if (headElements.image.description !== undefined) { //optional
+					add ("<description>" + encode (headElements.image.description) + "</description>");
+					}
+				add ("</image>"); indentlevel--;
+				}
+		//<itunes> -- 4/4/20 by DW
+			if (headElements.itunes !== undefined) {
+				if (headElements.itunes.category !== undefined) { //an array of categories
+					headElements.itunes.category.forEach (function (item) {
+						var splits = item.split ("/"), catclosetag = "</itunes:category>";
+						function getcat (theCat) {
+							return ("<itunes:category text=\"" + encode (theCat) + "\">");
+							}
+						if (splits.length == 1) {
+							add (getcat (item) + catclosetag);
+							}
+						else {
+							add (getcat (splits [0]) + getcat (splits [1]) + catclosetag + catclosetag);
+							}
+						});
+					}
+				if (headElements.itunes.explicit !== undefined) { //must be yes, no or clean
+					add ("<itunes:explicit>" + headElements.itunes.explicit + "</itunes:explicit>"); 
+					}
 				}
 		addAccount ("twitter", username); 
 		addAccount ("facebook", headElements.ownerFacebookAccount); 
@@ -352,7 +396,7 @@ function buildRssFeed (headElements, historyArray) {
 							if (item.enclosure != undefined) { //9/23/14 by DW
 								var enc = item.enclosure;
 								if (enc.type != undefined) { //10/25/14 by DW
-									if (beginsWith (enc.type.toLowerCase (), "image")) {
+									if (utils.beginsWith (enc.type.toLowerCase (), "image")) {
 										add ("<source:outline text=\"" + outlineTextAtt + "\" created=\"" + itemcreated + "\" type=\"image\" url=\"" + enc.url + "\"/>");
 										}
 									}

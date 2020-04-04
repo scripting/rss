@@ -10,6 +10,14 @@ It comes from my Radio3 linkblog, which is a <a href="http://radio3.io/users/dav
 
 ### Updates
 
+#### v0.5.29 -- 4/4/20 by DW
+
+I wanted to get the Cuomo podcast feed to validate through iTunes, so I added the needed features. 
+
+1. Support for the &lt;channel> level &lt;image> element.
+
+2. Two elements of the itunes namespace: category and explicit. 
+
 #### v0.5.20 -- 1/14/20 by DW
 
 Added a <a href="https://github.com/scripting/rss/blob/master/examples/app/test.js">test app</a> that illustrates how to use the <a href="https://www.npmjs.com/package/daverss">package</a> in a Node app. 
