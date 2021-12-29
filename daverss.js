@@ -1,7 +1,7 @@
 var myProductName = "daverss", myVersion = "0.5.31";  
 
 /*  The MIT License (MIT)
-	Copyright (c) 2014-2020 Dave Winer
+	Copyright (c) 2014-2021 Dave Winer
 	
 	Permission is hereby granted, free of charge, to any person obtaining a copy
 	of this software and associated documentation files (the "Software"), to deal
