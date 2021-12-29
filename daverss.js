@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.5.29";  
+var myProductName = "daverss", myVersion = "0.5.31";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2020 Dave Winer
@@ -38,7 +38,7 @@ var urlGetRssEnclosureInfo = "http://pub2.fargo.io:5347/getEnclosureInfo?url=";
 var rssCloudDefaults = { 
 	domain: "rpc.rsscloud.io",
 	port: 5337,
-	path: "/pleaseNotify"
+	path: "/ping" //12/29/21 by DW
 	}
 var localTimeFormat = "ddd, mmmm d, yyyy h:MM TT Z";
 

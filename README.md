@@ -10,6 +10,14 @@ It comes from my Radio3 linkblog, which is a <a href="http://radio3.io/users/dav
 
 ### Updates
 
+#### v0.5.31 -- 12/29/21 by DW
+
+Change the value of rssCloudDefaults.path to /ping, which according to Andrew Shell is the actual path rpc.rsscloud.io responds to. Andrew runs that server.
+
+#### v0.5.30 -- 10/11/21 by DW
+
+In  package.json  we now require dateformat 4.5.1 because they updated the package to not work with older versions of Node. 
+
 #### v0.5.29 -- 4/4/20 by DW
 
 I wanted to get the Cuomo podcast feed to validate through iTunes, so I added the needed features. 
