@@ -10,6 +10,10 @@ It comes from my Radio3 linkblog, which is a <a href="http://radio3.io/users/dav
 
 ### Updates
 
+#### v0.6.0 -- 5/5/22 AM by DW
+
+If there's a <i>markdowntext</i> value for an item, generate a <source:markdown> element in the item in the feed.
+
 #### v0.5.31 -- 12/29/21 by DW
 
 Change the value of rssCloudDefaults.path to /ping, which according to Andrew Shell is the actual path rpc.rsscloud.io responds to. Andrew runs that server.

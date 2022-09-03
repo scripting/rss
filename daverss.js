@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.5.31";  
+var myProductName = "daverss", myVersion = "0.6.0";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -377,6 +377,10 @@ function buildRssFeed (headElements, historyArray) {
 				//source:jsonUrl -- 3/24/15 by DW
 					if (item.linkJson !== undefined) {
 						add ("<source:linkJson>" + encode (item.linkJson) + "</source:linkJson>"); 
+						}
+				//source:markdowntext -- 5/5/22 by DW
+					if (item.markdowntext !== undefined) {
+						add ("<source:markdown>" + encode (item.markdowntext) + "</source:markdown>"); 
 						}
 				//source:outline
 					if (item.outline != undefined) { //10/15/14 by DW
