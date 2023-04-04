@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.0";  
+var myProductName = "daverss", myVersion = "0.6.2";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -224,6 +224,7 @@ function buildRssFeed (headElements, historyArray) {
 	var xmltext = "", indentlevel = 0, now = new Date (); nowstring = now.toGMTString ();
 	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems;
 	var contentNamespaceDecl = "", facebookNamespaceDecl = "", itunesNamespaceDecl = "";
+	const flImageEnclosureIsOutline = false; //4/4/23 by DW
 	function add (s) {
 		xmltext += utils.filledString ("\t", indentlevel) + s + "\n";
 		}
@@ -397,11 +398,13 @@ function buildRssFeed (headElements, historyArray) {
 							add ("<source:outline text=\"" + outlineTextAtt + "\" created=\"" + itemcreated + "\" type=\"tweet\" tweetId=\"" + item.idTweet + "\" tweetUserName=\"" + encode (item.twitterScreenName) + "\"/>");
 							}
 						else { //12/14/16 by DW
-							if (item.enclosure != undefined) { //9/23/14 by DW
-								var enc = item.enclosure;
-								if (enc.type != undefined) { //10/25/14 by DW
-									if (utils.beginsWith (enc.type.toLowerCase (), "image")) {
-										add ("<source:outline text=\"" + outlineTextAtt + "\" created=\"" + itemcreated + "\" type=\"image\" url=\"" + enc.url + "\"/>");
+							if (flImageEnclosureIsOutline) { //4/4/23 by DW
+								if (item.enclosure != undefined) { //9/23/14 by DW
+									var enc = item.enclosure;
+									if (enc.type != undefined) { //10/25/14 by DW
+										if (utils.beginsWith (enc.type.toLowerCase (), "image")) {
+											add ("<source:outline text=\"" + outlineTextAtt + "\" created=\"" + itemcreated + "\" type=\"image\" url=\"" + enc.url + "\"/>");
+											}
 										}
 									}
 								}
@@ -418,6 +421,16 @@ function buildRssFeed (headElements, historyArray) {
 				//source:account for twitter only -- 12/18/18 by DW
 					if (item.twitterScreenName !== undefined) { 
 						addAccount ("twitter", item.twitterScreenName); 
+						}
+				//source:account for other services -- 3/21/23 by DW
+					if (item.account !== undefined) { 
+						try {
+							if ((item.account.service !== undefined) && (item.account.name !== undefined)) {
+								addAccount (item.account.service, item.account.name); 
+								}
+							}
+						catch (err) {
+							}
 						}
 				add ("</item>"); indentlevel--;
 				ctitems++;
