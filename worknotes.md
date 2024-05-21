@@ -1,3 +1,11 @@
+#### 5/20/24; 5:00:37 PM by DW
+
+Add support for <source:self>.
+
+#### 3/14/24; 1:23:03 PM by DW
+
+Support for <source:blogroll> element.
+
 #### 4/4/23; 10:05:50 AM by DW
 
 Stopped generating a <source:outline> element for enclosures that are images. 

@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.2";  
+var myProductName = "daverss", myVersion = "0.6.6";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -267,6 +267,7 @@ function buildRssFeed (headElements, historyArray) {
 		//<cloud> element -- 6/5/15 by DW
 			if (headElements.flRssCloudEnabled) {
 				add ("<cloud domain=\"" + headElements.rssCloudDomain + "\" port=\"" + headElements.rssCloudPort + "\" path=\"" + headElements.rssCloudPath + "\" registerProcedure=\"" + headElements.rssCloudRegisterProcedure + "\" protocol=\"" + headElements.rssCloudProtocol + "\" />")
+				addIfDefined ("source:cloud", headElements.rssCloudUrl); //11/28/23 by DW
 				}
 		//<image> element -- 4/4/20 by DW
 			if (headElements.image !== undefined) {
@@ -313,8 +314,15 @@ function buildRssFeed (headElements, historyArray) {
 		addAccount ("github", headElements.ownerGithubAccount); 
 		addAccount ("linkedin", headElements.ownerLinkedinAccount); 
 		add ("<source:localTime>" + dateFormat (now, localTimeFormat) + "</source:localTime>");
+		//<source:self> -- 5/20/24 by DW
+			if (headElements.urlSelf !== undefined) {
+				add ("<source:self>" + encode (headElements.urlSelf) + "</source:self>"); 
+				}
 		if (headElements.likes !== undefined) { //11/23/18 by DW
 			add ("<source:likes>" + encode (headElements.likes) + "</source:likes>");
+			}
+		if (headElements.urlBlogrollOpml !== undefined) { //3/14/24 by DW
+			add ("<source:blogroll>" + encode (headElements.urlBlogrollOpml) + "</source:blogroll>");
 			}
 	//add items
 		var ctitems = 0;
