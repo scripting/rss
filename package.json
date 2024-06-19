@@ -14,7 +14,7 @@
 		],
 	"dependencies": {
 		"dateformat": "4.5.1",
-		"marked": "3.0.8",
+		"marked": "4.0.10",
 		"querystring": "*",
 		"daveutils": "*"
 		} 
