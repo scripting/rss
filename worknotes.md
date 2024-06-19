@@ -1,3 +1,7 @@
+#### 6/17/24; 5:49:33 PM by DW
+
+Add support for <itunes:author> and <itunes:type>.
+
 #### 5/20/24; 5:00:37 PM by DW
 
 Add support for <source:self>.

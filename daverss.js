@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.7";  
+var myProductName = "daverss", myVersion = "0.6.8";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -309,7 +309,10 @@ function buildRssFeed (headElements, historyArray) {
 						});
 					}
 				if (headElements.itunes.explicit !== undefined) { //must be yes, no or clean
-					add ("<itunes:explicit>" + headElements.itunes.explicit + "</itunes:explicit>"); 
+					add ("<itunes:explicit>" + encode (headElements.itunes.explicit) + "</itunes:explicit>"); 
+					}
+				if (headElements.itunes.type !== undefined) { //episodic or serial  6/17/24 by DW
+					add ("<itunes:type>" + encode (headElements.itunes.type) + "</itunes:type>"); 
 					}
 				}
 		addAccount ("twitter", username); 
