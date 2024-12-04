@@ -3,7 +3,7 @@
 	"description": "This is where I put my code to generate RSS feeds from server apps.",
 	"author": "Dave Winer <dave.winer@gmaill.com>",
 	"license": "MIT",
-	"version": "0.6.8",
+	"version": "0.6.10",
 	"main": "daverss.js",
 	"repository": {
 		"type": "git",
