@@ -1,3 +1,7 @@
+#### 6/4/25; 11:02:52 AM by DW
+
+When building the <image> element, we were adding the description twice. Fixed.
+
 #### 12/4/24; 10:54:13 AM by DW
 
 Added support for <webmaster>.

@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.10";  
+var myProductName = "daverss", myVersion = "0.6.11";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -272,8 +272,8 @@ function buildRssFeed (headElements, historyArray) {
 		//<image> element -- 4/4/20 by DW
 			if (headElements.image !== undefined) {
 				add ("<image>"); indentlevel++;
-				add ("<url>" + encode (headElements.image.url) + "</url>");
 				add ("<title>" + encode (headElements.image.title) + "</title>");
+				add ("<url>" + encode (headElements.image.url) + "</url>");
 				add ("<link>" + encode (headElements.image.link) + "</link>");
 				if (headElements.image.description !== undefined) { //optional
 					add ("<description>" + encode (headElements.image.description) + "</description>");
@@ -283,9 +283,6 @@ function buildRssFeed (headElements, historyArray) {
 					}
 				if (headElements.image.height !== undefined) { //optional
 					add ("<height>" + encode (headElements.image.height) + "</height>");
-					}
-				if (headElements.image.description !== undefined) { //optional
-					add ("<description>" + encode (headElements.image.description) + "</description>");
 					}
 				add ("</image>"); indentlevel--;
 				}
