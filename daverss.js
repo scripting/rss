@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.11";  
+var myProductName = "daverss", myVersion = "0.6.12";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -32,6 +32,7 @@ const dateFormat = require ("dateformat");
 const marked = require ("marked"); 
 const querystring = require ("querystring");
 const request = require ("request");
+const turndown = require ("turndown"); //11/10/25 by DW
 
 var urlSourceNamespace = "http://source.scripting.com/";
 var urlGetRssEnclosureInfo = "http://pub2.fargo.io:5347/getEnclosureInfo?url=";
@@ -225,6 +226,8 @@ function buildRssFeed (headElements, historyArray) {
 	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems;
 	var contentNamespaceDecl = "", facebookNamespaceDecl = "", itunesNamespaceDecl = "";
 	const flImageEnclosureIsOutline = false; //4/4/23 by DW
+	const myTurndown = new turndown (); //11/10/25 by DW
+	
 	function add (s) {
 		xmltext += utils.filledString ("\t", indentlevel) + s + "\n";
 		}
@@ -391,9 +394,22 @@ function buildRssFeed (headElements, historyArray) {
 					if (item.linkJson !== undefined) {
 						add ("<source:linkJson>" + encode (item.linkJson) + "</source:linkJson>"); 
 						}
-				//source:markdowntext -- 5/5/22 by DW
+				//source:markdown -- 5/5/22 by DW & 11/10/25 by DW
 					if (item.markdowntext !== undefined) {
 						add ("<source:markdown>" + encode (item.markdowntext) + "</source:markdown>"); 
+						}
+					else {
+						if (utils.getBoolean (headElements.flSourceMarkdown)) { //11/10/25 by DW 
+							if (item.text !== undefined) {
+								try {
+									const mdtext = myTurndown.turndown (item.text);
+									add ("<source:markdown>" + encode (mdtext) + "</source:markdown>"); 
+									}
+								catch (err) {
+									console.log ("turndown: err.message == " + err.message);
+									}
+								}
+							}
 						}
 				//source:outline
 					if (item.outline != undefined) { //10/15/14 by DW
@@ -444,6 +460,7 @@ function buildRssFeed (headElements, historyArray) {
 						catch (err) {
 							}
 						}
+				
 				add ("</item>"); indentlevel--;
 				ctitems++;
 				}

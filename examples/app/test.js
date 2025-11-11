@@ -16,11 +16,12 @@ var headElements = {
 	"rssCloudPort": 5337,
 	"rssCloudPath": "/pleaseNotify",
 	"rssCloudRegisterProcedure": "",
-	"rssCloudProtocol": "http-post"
+	"rssCloudProtocol": "http-post",
+	"flSourceMarkdown": true //11/10/25 by DW
 	};
 var historyArray = [
 	{
-		"text": "The Associated Press is adding user-generated social content into its wire services.",
+		"text": "The <b>Associated</b> <i>Press</i> is adding user-generated social content into its wire services.",
 		"title": "",
 		"link": "http://www.niemanlab.org/2017/05/the-associated-press-is-adding-user-generated-social-content-verified-of-course-into-its-wire-services/?utm_source=feedburner&utm_medium=feed&utm_campaign=Feed:+NiemanJournalismLab+(Nieman+Journalism+Lab)",
 		"linkShort": "http://bit.ly/2qoz8i6",

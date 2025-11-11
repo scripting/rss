@@ -1,3 +1,13 @@
+#### 11/10/25; 11:09:22 AM by DW
+
+Support source:markdown.
+
+When building a feed, if there's headElement.flSourceMarkdown and it's true, and there is a text value for the item, we generate a source:markdown element by calling turndown to convert it. 
+
+Note, there was previous source:markdown support dating back to 2022, which looked for item.markdowntext. It's good in case the feed is being generated for an editor where the user wrote in markdown, it's not being generated. 
+
+In package.json, the version of turndown is 7.2.2. Learned the lesson many times the hard way to always require the version of a package that you used to implement the functionality and not to use "*" because developers implement breaking changes in the most trivial packages (not that turndown is trivial but it may include them). 
+
 #### 6/4/25; 11:02:52 AM by DW
 
 When building the <image> element, we were adding the description twice. Fixed.
