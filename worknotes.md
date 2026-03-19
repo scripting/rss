@@ -1,3 +1,7 @@
+#### 3/19/26; 9:39:19 AM by DW
+
+The url of the source namespace changed to https://source.scripting.com/. 
+
 #### 11/10/25; 11:09:22 AM by DW
 
 Support source:markdown.

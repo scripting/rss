@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.12";  
+var myProductName = "daverss", myVersion = "0.6.14";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -34,7 +34,7 @@ const querystring = require ("querystring");
 const request = require ("request");
 const turndown = require ("turndown"); //11/10/25 by DW
 
-var urlSourceNamespace = "http://source.scripting.com/";
+var urlSourceNamespace = "https://source.scripting.com/";
 var urlGetRssEnclosureInfo = "http://pub2.fargo.io:5347/getEnclosureInfo?url=";
 var rssCloudDefaults = { 
 	domain: "rpc.rsscloud.io",
