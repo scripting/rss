@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.14";  
+var myProductName = "daverss", myVersion = "0.6.15";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -315,10 +315,16 @@ function buildRssFeed (headElements, historyArray) {
 					add ("<itunes:type>" + encode (headElements.itunes.type) + "</itunes:type>"); 
 					}
 				}
-		addAccount ("twitter", username); 
-		addAccount ("facebook", headElements.ownerFacebookAccount); 
-		addAccount ("github", headElements.ownerGithubAccount); 
-		addAccount ("linkedin", headElements.ownerLinkedinAccount); 
+		//accounts -- 3/27/26 by DW
+			addAccount ("bluesky", headElements.ownerBlueskyAccount);  //3/27/26 by DW
+			addAccount ("mastodon", headElements.ownerMastodonAccount); 
+			addAccount ("instagram", headElements.ownerInstagramAccount); 
+			addAccount ("threads", headElements.ownerThreadsAccount); 
+			
+			addAccount ("facebook", headElements.ownerFacebookAccount); 
+			addAccount ("github", headElements.ownerGithubAccount); 
+			addAccount ("twitter", username); 
+			addAccount ("linkedin", headElements.ownerLinkedinAccount); 
 		add ("<source:localTime>" + dateFormat (now, localTimeFormat) + "</source:localTime>");
 		//<source:self> -- 5/20/24 by DW
 			if (headElements.urlSelf !== undefined) {
@@ -472,6 +478,7 @@ function buildRssFeed (headElements, historyArray) {
 function buildJsonFeed (headElements, historyArray) {
 	var now = new Date (); nowstring = now.toGMTString ();
 	var username = headElements.twitterScreenName, maxitems = headElements.maxFeedItems;
+	const myTurndown = new turndown (); //3/27/26 by DW
 	function addAccount (servicename, username) {
 		if ((username != undefined) && (username.length > 0)) { 
 			var accounts;
@@ -512,11 +519,53 @@ function buildJsonFeed (headElements, historyArray) {
 			protocol: headElements.rssCloudProtocol
 			};
 		}
-	addAccount ("twitter", username); 
-	addAccount ("facebook", headElements.ownerFacebookAccount); 
-	addAccount ("github", headElements.ownerGithubAccount); 
-	addAccount ("linkedin", headElements.ownerLinkedinAccount); 
-	//add items
+	
+	//missing elements -- 3/27/26 by DW
+		//accounts
+			addAccount ("bluesky", headElements.ownerBlueskyAccount);  //3/27/26 by DW
+			addAccount ("mastodon", headElements.ownerMastodonAccount); 
+			addAccount ("instagram", headElements.ownerInstagramAccount); 
+			addAccount ("threads", headElements.ownerThreadsAccount); 
+			
+			addAccount ("twitter", username); 
+			addAccount ("facebook", headElements.ownerFacebookAccount); 
+			addAccount ("github", headElements.ownerGithubAccount); 
+			addAccount ("linkedin", headElements.ownerLinkedinAccount); 
+		//image element
+			if (headElements.image !== undefined) {
+				jstruct.rss.channel.image = {
+					title: headElements.image.title,
+					url: headElements.image.url,
+					link: headElements.image.link,
+					};
+				if (headElements.image.description !== undefined) { //optional
+					jstruct.rss.channel.image.description = headElements.image.description;
+					}
+				if (headElements.image.width !== undefined) { //optional
+					jstruct.rss.channel.image.width = headElements.image.width;
+					}
+				if (headElements.image.height !== undefined) { //optional
+					jstruct.rss.channel.image.height = headElements.image.height;
+					}
+				}
+		//source:self
+			if (headElements.urlSelf !== undefined) {
+				jstruct.rss.channel ["source:self"] = headElements.urlSelf;
+				}
+		//source:blogroll
+			if (headElements.urlBlogrollOpml !== undefined) { 
+				jstruct.rss.channel ["source:blogroll"] = headElements.urlBlogrollOpml;
+				}
+		//source:likes
+			if (headElements.likes !== undefined) {
+				jstruct.rss.channel ["source:likes"] = headElements.likes;
+				}
+		//webmaster
+			if (headElements.webmaster !== undefined) {
+				jstruct.rss.channel.webmaster = headElements.webmaster;
+				}
+	
+	//items
 		var ctitems = 0, items = jstruct.rss.channel.item = new Array ();
 		for (var i = 0; (i < historyArray.length) && (ctitems < maxitems); i++) {
 			var item = historyArray [i], feedItem = new Object ();
@@ -562,15 +611,31 @@ function buildJsonFeed (headElements, historyArray) {
 								};
 							}
 						}
-				//source:markdown
-					if (utils.getBoolean (item.flMarkdown)) {
-						feedItem ["source:markdown"] = item.text;
+				//source:markdown -- 5/5/22 by DW & 11/10/25 by DW
+					if (item.markdowntext !== undefined) {
+						feedItem ["source:markdown"] = item.markdowntext;
+						}
+					else {
+						if (utils.getBoolean (headElements.flSourceMarkdown)) { //11/10/25 by DW 
+							if (item.text !== undefined) {
+								try {
+									const mdtext = myTurndown.turndown (item.text);
+									feedItem ["source:markdown"] = mdtext;
+									}
+								catch (err) {
+									console.log ("turndown: err.message == " + err.message);
+									}
+								}
+							}
 						}
 				//source:jsonUrl
 					if (item.linkJson !== undefined) {
 						feedItem ["source:linkJson"] = item.linkJson;
 						}
-				
+				//author -- 3/27/26 by DW
+					if (item.author !== undefined) { 
+						feedItem.author = item.author;
+						}
 				feedItem ["source:linkShort"] = item.linkShort;
 				feedItem ["source:outline"] = item.outline;
 				jstruct.rss.channel.item.push (feedItem);

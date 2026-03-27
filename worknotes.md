@@ -1,3 +1,25 @@
+#### 3/27/26; 9:44:59 AM by DW
+
+Allow for bluesky, mastodon, instagram, threads source:account elements. moved twitter to the end of the list because they had the gall to ignore my please to restore the account.  
+
+Brought the json feed building up to date, implementing the following elements. (It had gotten out of sync.)
+
+* Added source:account entries for bluesky, mastodon, instagram, threads (placed before twitter)
+
+* Added image element (title, url, link, description, width, height)
+
+* Added source:self
+
+* Added source:blogroll
+
+* Added source:likes
+
+* Added webmaster
+
+* Fixed source:markdown Ñ now handles explicit markdowntext field and auto-conversion via turndown if flSourceMarkdown is set
+
+Added author
+
 #### 3/19/26; 9:39:19 AM by DW
 
 The url of the source namespace changed to https://source.scripting.com/. 
