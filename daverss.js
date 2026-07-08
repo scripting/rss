@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.17";  
+var myProductName = "daverss", myVersion = "0.6.18";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -396,6 +396,15 @@ function buildRssFeed (headElements, historyArray) {
 							add ("<enclosure url=\"" + enc.url + "\" type=\"" + enc.type + "\" length=\"" + enc.length + "\"/>");
 							}
 						}
+				//source -- 7/8/26 by DW -- core element from RSS 2.0
+					if (item.source !== undefined) {
+						const source = item.source;
+						if (typeof (item.source) == "object") {
+							if ((source.url !== undefined) && (source.title !== undefined)) {
+								add ("<source url=\"" + encode (source.url) + "\">" + encode (source.title) + "</source>");
+								}
+							}
+						}
 				//source:jsonUrl -- 3/24/15 by DW
 					if (item.linkJson !== undefined) {
 						add ("<source:linkJson>" + encode (item.linkJson) + "</source:linkJson>"); 
@@ -475,7 +484,15 @@ function buildRssFeed (headElements, historyArray) {
 							add ("<source:inReplyTo isPermaLink=\"false\">" + encode (item.inReplyTo.value) + "</source:inReplyTo>"); 
 							}
 						}
-				
+				//source:comments -- 7/8/26 by DW
+					if (item.comments !== undefined) {
+						const comments = item.comments;
+						if (typeof (comments) == "object") {
+							if ((comments.count !== undefined) && (comments.feedUrl !== undefined)) {
+								add ("<source:comments count=\"" + comments.count + "\" feedUrl=\"" + encode (comments.feedUrl) + "\"/>");
+								}
+							}
+						}
 				add ("</item>"); indentlevel--;
 				ctitems++;
 				}
@@ -620,6 +637,26 @@ function buildJsonFeed (headElements, historyArray) {
 								};
 							}
 						}
+				//source:jsonUrl
+					if (item.linkJson !== undefined) {
+						feedItem ["source:linkJson"] = item.linkJson;
+						}
+				//author -- 3/27/26 by DW
+					if (item.author !== undefined) { 
+						feedItem.author = item.author;
+						}
+				//source -- 7/8/26 by DW -- core element from RSS 2.0
+					if (item.source !== undefined) {
+						const source = item.source;
+						if (typeof (source) == "object") {
+							if ((source.url !== undefined) && (source.title !== undefined)) {
+								feedItem.source = {
+									url: source.url,
+									"#value": source.title
+									};
+								}
+							}
+						}
 				//source:markdown -- 5/5/22 by DW & 11/10/25 by DW
 					if (item.markdowntext !== undefined) {
 						feedItem ["source:markdown"] = item.markdowntext;
@@ -637,14 +674,6 @@ function buildJsonFeed (headElements, historyArray) {
 								}
 							}
 						}
-				//source:jsonUrl
-					if (item.linkJson !== undefined) {
-						feedItem ["source:linkJson"] = item.linkJson;
-						}
-				//author -- 3/27/26 by DW
-					if (item.author !== undefined) { 
-						feedItem.author = item.author;
-						}
 				//source:inReplyTo -- 5/15/26 by DW
 					if (item.inReplyTo != undefined) {
 						if (utils.getBoolean (item.inReplyTo.flPermalink)) {
@@ -655,6 +684,18 @@ function buildJsonFeed (headElements, historyArray) {
 								isPermaLink: false,
 								"#value": item.inReplyTo.value
 									};
+							}
+						}
+				//source:comments -- 7/8/26 by DW
+					if (item.comments !== undefined) {
+						const comments = item.comments;
+						if (typeof (comments) == "object") {
+							if ((comments.count !== undefined) && (comments.feedUrl !== undefined)) {
+								feedItem ["source:comments"] = {
+									count: comments.count,
+									feedUrl: comments.feedUrl
+									};
+								}
 							}
 						}
 				feedItem ["source:linkShort"] = item.linkShort;

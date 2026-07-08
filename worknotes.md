@@ -1,3 +1,7 @@
+#### 7/8/26; 8:14:54 AM by DW
+
+Add support for <source:comments>
+
 #### 5/15/26; 6:11:30 PM by DW
 
 Add support for source:inReplyTo in both the XML and JSON versions of the feed.
