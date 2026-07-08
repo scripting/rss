@@ -1,3 +1,7 @@
+#### 5/15/26; 6:11:30 PM by DW
+
+Add support for source:inReplyTo in both the XML and JSON versions of the feed.
+
 #### 3/27/26; 9:44:59 AM by DW
 
 Allow for bluesky, mastodon, instagram, threads source:account elements. moved twitter to the end of the list because they had the gall to ignore my please to restore the account.  
