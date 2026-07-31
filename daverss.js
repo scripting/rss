@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.18";  
+var myProductName = "daverss", myVersion = "0.6.20";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -43,6 +43,14 @@ var rssCloudDefaults = {
 	}
 var localTimeFormat = "ddd, mmmm d, yyyy h:MM TT Z";
 
+function notUndefined (val) { //7/24/26 by DW
+	if ((val === undefined) || (val === null)) {
+		return (false);
+		}
+	else {
+		return (true);
+		}
+	}
 function cloudPing (urlServer, urlFeed, callback) {
 	if (urlServer === undefined) {
 		urlServer = "http://" + rssCloudDefaults.domain + ":" + rssCloudDefaults.port + rssCloudDefaults.path;
@@ -325,6 +333,12 @@ function buildRssFeed (headElements, historyArray) {
 			addAccount ("github", headElements.ownerGithubAccount); 
 			addAccount ("twitter", username); 
 			addAccount ("linkedin", headElements.ownerLinkedinAccount); 
+		
+		//custom accounts -- 7/17/26 by CC
+			if (headElements.account !== undefined) { //7/17/26 by CC -- the feed's own account on the service that hosts it, e.g. service "rss.chat", name "dave"
+				addAccount (headElements.account.service, headElements.account.name);
+				}
+		
 		add ("<source:localTime>" + dateFormat (now, localTimeFormat) + "</source:localTime>");
 		//<source:self> -- 5/20/24 by DW
 			if (headElements.urlSelf !== undefined) {
@@ -485,7 +499,7 @@ function buildRssFeed (headElements, historyArray) {
 							}
 						}
 				//source:comments -- 7/8/26 by DW
-					if (item.comments !== undefined) {
+					if (notUndefined (item.comments)) { //7/24/26 by DW
 						const comments = item.comments;
 						if (typeof (comments) == "object") {
 							if ((comments.count !== undefined) && (comments.feedUrl !== undefined)) {
@@ -544,6 +558,9 @@ function buildJsonFeed (headElements, historyArray) {
 			registerProcedure: headElements.rssCloudRegisterProcedure,
 			protocol: headElements.rssCloudProtocol
 			};
+		}
+	if (headElements.account !== undefined) { //7/17/26 by CC
+		addAccount (headElements.account.service, headElements.account.name);
 		}
 	
 	//missing elements -- 3/27/26 by DW
@@ -687,7 +704,7 @@ function buildJsonFeed (headElements, historyArray) {
 							}
 						}
 				//source:comments -- 7/8/26 by DW
-					if (item.comments !== undefined) {
+					if (notUndefined (item.comments)) { //7/24/26 by DW -- check against NULL too
 						const comments = item.comments;
 						if (typeof (comments) == "object") {
 							if ((comments.count !== undefined) && (comments.feedUrl !== undefined)) {
