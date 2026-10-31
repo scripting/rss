@@ -1,4 +1,4 @@
-var myProductName = "daverss", myVersion = "0.6.20";  
+var myProductName = "daverss", myVersion = "0.6.21";  
 
 /*  The MIT License (MIT)
 	Copyright (c) 2014-2021 Dave Winer
@@ -489,14 +489,19 @@ function buildRssFeed (headElements, historyArray) {
 						catch (err) {
 							}
 						}
-				//source:inReplyTo -- 5/15/26 by DW
+				//source:inReplyTo -- 5/15/26 by DW & 10/31/26 by DW
 					if (item.inReplyTo != undefined) {
-						if (utils.getBoolean (item.inReplyTo.flPermalink)) {
-							add ("<source:inReplyTo>" + encode (item.inReplyTo.value) + "</source:inReplyTo>"); 
+						var atts = "";
+						if (!utils.getBoolean (item.inReplyTo.flPermalink)) {
+							atts += " isPermaLink=\"false\"";
 							}
-						else {
-							add ("<source:inReplyTo isPermaLink=\"false\">" + encode (item.inReplyTo.value) + "</source:inReplyTo>"); 
+						if (item.inReplyTo.feedUrl !== undefined) { //10/31/26 by DW
+							atts += " feedUrl=\"" + encode (item.inReplyTo.feedUrl) + "\"";
 							}
+						if (item.inReplyTo.feedTitle !== undefined) {
+							atts += " feedTitle=\"" + encode (item.inReplyTo.feedTitle) + "\"";
+							}
+						add ("<source:inReplyTo" + atts + ">" + encode (item.inReplyTo.value) + "</source:inReplyTo>"); 
 						}
 				//source:comments -- 7/8/26 by DW
 					if (notUndefined (item.comments)) { //7/24/26 by DW
@@ -691,16 +696,23 @@ function buildJsonFeed (headElements, historyArray) {
 								}
 							}
 						}
-				//source:inReplyTo -- 5/15/26 by DW
+				//source:inReplyTo -- 5/15/26 by DW & 10/31/26 by DW
 					if (item.inReplyTo != undefined) {
-						if (utils.getBoolean (item.inReplyTo.flPermalink)) {
-							feedItem ["source:inReplyTo"] = item.inReplyTo.value;
+						var theElement = {"#value": item.inReplyTo.value};
+						if (!utils.getBoolean (item.inReplyTo.flPermalink)) {
+							theElement.isPermaLink = false;
+							}
+						if (item.inReplyTo.feedUrl !== undefined) { //10/31/26 by DW
+							theElement.feedUrl = item.inReplyTo.feedUrl;
+							}
+						if (item.inReplyTo.feedTitle !== undefined) {
+							theElement.feedTitle = item.inReplyTo.feedTitle;
+							}
+						if (Object.keys (theElement).length === 1) { //no attributes, a bare string as before
+							feedItem ["source:inReplyTo"] = theElement ["#value"];
 							}
 						else {
-							feedItem ["source:inReplyTo"] = {
-								isPermaLink: false,
-								"#value": item.inReplyTo.value
-									};
+							feedItem ["source:inReplyTo"] = theElement;
 							}
 						}
 				//source:comments -- 7/8/26 by DW

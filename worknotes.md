@@ -1,3 +1,7 @@
+#### 10/31/26; 10:56:09 AM by DW
+
+Added two optional attributes to source:inReplyTo, feedUrl and feedTitle. 
+
 #### 7/8/26; 8:14:54 AM by DW
 
 Add support for <source:comments>
@@ -24,7 +28,7 @@ Brought the json feed building up to date, implementing the following elements. 
 
 * Added webmaster
 
-* Fixed source:markdown Ñ now handles explicit markdowntext field and auto-conversion via turndown if flSourceMarkdown is set
+* Fixed source:markdown â€” now handles explicit markdowntext field and auto-conversion via turndown if flSourceMarkdown is set
 
 Added author
 
